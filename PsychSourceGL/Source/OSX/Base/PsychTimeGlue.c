@@ -568,8 +568,8 @@ const char* PsychSupportStatus(void)
         Gestalt(gestaltSystemVersionMajor, &osMajor);
         Gestalt(gestaltSystemVersionMinor, &osMinor);
         
-        // OSX 10.9+ is supported:
-        isSupported = ((osMajor > 10) || (osMajor == 10 && osMinor >= 9)) ? 1 : 0;
+        // OSX 10.6 - 10.9 is supported:
+        isSupported = (osMajor == 10 && osMinor <= 9 && osMinor >= 6) ? 1 : 0;
         
         if (isSupported) {
             sprintf(statusString, "OSX %i.%i Supported.", (int) osMajor, (int) osMinor);
