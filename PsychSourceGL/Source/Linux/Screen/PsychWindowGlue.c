@@ -987,8 +987,32 @@ psych_bool PsychOSOpenOnscreenWindow(PsychScreenSettingsType *screenSettings, Ps
 
     PsychLockDisplay();
 
-    // Ok, the OpenGL rendering context is up and running. Auto-detect and bind all
-    // available OpenGL extensions via GLEW:
+    // Ok, the OpenGL rendering context is up and running.
+    // Running on top of a FOSS Mesa graphics driver?
+    if ((x11_windowcount == 0) && strstr((const char*) glGetString(GL_VERSION), "Mesa") && !getenv("PSYCH_DONT_LOCK_MOGLCORE")) {
+        // Yes. At least as of Mesa 10.1 as shipped in Ubuntu 14.04-LTS, Mesa
+        // will become seriously crashy if our Screen() mex files is flushed
+        // from memory due to a clear all/mex/Screen and afterwards reloaded.
+        // This because Mesa maintains pointers back into our library image,
+        // which will turn into dangling pointers if we get unloaded/reloaded
+        // into a new location. To prevent Mesa crashes on clear Screen -> reload,
+        // prevent this mex file against clearing from Octave/Matlab address space.
+        // An ugly solution which renders "clear Screen" useless, but the best i can
+        // come up with at the moment :(
+        if (PsychRuntimeEvaluateString("moglcore('LockModule');") > 0) {
+            if (PsychPrefStateGet_Verbosity() > 1) {
+                printf("PTB-WARNING: Failed to enable moglcore locking workaround for Mesa OpenGL bug. Trying alternative workaround.\n");
+                printf("PTB-WARNING: Calling 'clear all', 'clear mex', 'clear java', 'clear moglcore' is now unsafe and may crash if you try.\n");
+                printf("PTB-WARNING: You may add setenv('PSYCH_DONT_LOCK_MOGLCORE','1'); to your Octave/Matlab startup script to work around this issue in future sessions.\n");
+            }
+            setenv("PSYCH_DONT_LOCK_MOGLCORE", "1", 0);
+        }
+        else {
+            if (PsychPrefStateGet_Verbosity() > 2) printf("PTB-INFO: Workaround: Disabled ability to 'clear moglcore', as a workaround for a Mesa OpenGL bug. Sorry for the inconvenience.\n");
+        }
+    }
+
+    // Auto-detect and bind all available OpenGL extensions via GLEW:
     glerr = glewInit();
     if (GLEW_OK != glerr) {
         /* Problem: glewInit failed, something is seriously wrong. */
@@ -997,8 +1021,12 @@ psych_bool PsychOSOpenOnscreenWindow(PsychScreenSettingsType *screenSettings, Ps
     else {
         if (PsychPrefStateGet_Verbosity() > 3) printf("PTB-INFO: Using GLEW version %s for automatic detection of OpenGL extensions...\n", glewGetString(GLEW_VERSION));
     }
-  
-    fflush(NULL);
+
+    if ((x11_windowcount == 0) && strstr((const char*) glGetString(GL_VERSION), "Mesa") && getenv("PSYCH_DONT_LOCK_MOGLCORE") && !getenv("PSYCH_DONT_LOCK_SCREEN")) {
+        // Alternative approach to Mesa bug induced crash: Prevent Screen() from unloading, instead of moglcore:
+        mexLock();
+        if (PsychPrefStateGet_Verbosity() > 2) printf("PTB-INFO: Workaround: Disabled ability to 'clear Screen', as a workaround for a Mesa OpenGL bug. Sorry for the inconvenience.\n");
+    }
 
     // Increase our own open window counter:
     x11_windowcount++;
@@ -1405,7 +1433,7 @@ psych_int64 PsychOSGetSwapCompletionTimestamp(PsychWindowRecordType *windowRecor
 
     // Running on nouveau?
     if (strstr((char*) glGetString(GL_VENDOR), "nouveau")) {
-        // Yes. Query current kernel version: Is it a Linux 3.13 or 3.14 kernel with broken nouveau-kms pageflip events?
+        // Yes. Query current kernel version: Is it a Linux kernel with broken nouveau-kms pageflip events?
         struct utsname unameresult;
         int rc;
         double tref;
