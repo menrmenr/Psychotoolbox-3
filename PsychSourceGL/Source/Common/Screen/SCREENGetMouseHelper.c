@@ -75,6 +75,10 @@ static int	listenchar_enabled = 0;
 #include <sched.h>
 #include <errno.h>
 #include <sys/mman.h>
+
+// Suppress "XKeycodeToKeysym is deprecated" compiler warning:
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 #endif
 
 #if PSYCH_SYSTEM != PSYCH_WINDOWS
