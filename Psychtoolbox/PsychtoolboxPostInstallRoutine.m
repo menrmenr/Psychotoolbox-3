@@ -57,6 +57,7 @@ function PsychtoolboxPostInstallRoutine(isUpdate, flavor)
 % 07/02/2013 Drop support for 32-Bit Matlab on OSX, and thereby for 32-Bit OSX. (MK)
 % 07/02/2013 Drop support for OSX versions older than 10.6 "Snow Leopard". (MK)
 % 09/12/2013 Setup PsychStartup.m in startup.m for 32-Bit Windows as well. (MK)
+% 10/05/2014 Add some request for donations at the end. (MK)
 
 fprintf('\n\nRunning post-install routine...\n\n');
 
@@ -613,6 +614,12 @@ fprintf('\n');
 fprintf('Please also familiarize yourself with the demos contained in the PsychDemos subfolder\n');
 fprintf('and its subfolders. They show best practices for many common tasks and are generally\n');
 fprintf('well documented.\n');
+fprintf('\n\n');
+fprintf('If you find this software useful then please consider donating some money \n');
+fprintf('to support its ongoing maintenance and development. See: \n');
+fprintf('\n');
+fprintf('http://psychtoolbox.org/donations \n');
+fprintf('\n');
 
 fprintf('\nEnjoy!\n\n');
 
