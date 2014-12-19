@@ -3,18 +3,16 @@
 # triple-buffering to double-buffering, which is needed for
 # precisely timed visual stimulus onset and onset timestamping.
 #
-# It also asks to use the old but mature DRI2 on DRI3/Present
+# If you use a system with XOrg X-Server of version 1.16.0 -
+# 1.16.2 you will need to uncomment the ...
+# Option "DRI" "2" line by removing the # symbol.
+# This asks to use the old but mature DRI2 on DRI3/Present
 # capable X-Servers, instead of DRI3/Present for swap scheduling,
-# to avoid some bugs in the current DRI3/Present implementations,
-# "toothing problems" if you want. Option "Present" "off" is not
-# really needed on XOrg 1.16, therefore commented out, but option
-# "DRI" "2" is needed on such servers for Psychtoolbox to perform
-# correctly.
+# to avoid some bugs in the 1.16.0 - 1.16.2 DRI3/Present implementations,
 
 Section "Device"
    Identifier "IntelGPU"
    Driver     "intel"
    Option     "TripleBuffer" "off"
-   Option     "DRI" "2"
-   #Option    "Present" "off"
+   #Option     "DRI" "2"
 EndSection
