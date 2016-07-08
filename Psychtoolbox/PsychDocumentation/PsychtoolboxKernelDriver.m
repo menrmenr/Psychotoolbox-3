@@ -67,10 +67,18 @@
 % You must type this into the terminal:
 %
 % cd /System/Library/Extensions/
+%
+% FOR OSX 10.10 and OSX 10.11, possibly for OSX 10.9:
+%
 % sudo unzip /PathToPsychtoolbox/Psychtoolbox/PsychHardware/PsychtoolboxKernelDriver64Bit.kext.zip
 %
+% FOR OSX 10.8, and possibly for OSX 10.9 if above line does not work with 10.9:
+% (Please note that this 10.8 driver may have bugs or limitations not present in the 10.10+ driver!)
+%
+% sudo unzip /PathToPsychtoolbox/Psychtoolbox/PsychHardware/PsychtoolboxKernelDriver64BitForOSXMountainLion.kext.zip
+%
 % "PathToPsychtoolbox" must be replaced with the path to the Psychtoolbox folder, e.g., if your
-% Psychtoolbox is installed under /Users/kleinerm/Psychtoolbox, then the above command would
+% Psychtoolbox is installed under /Users/kleinerm/Psychtoolbox, then the above command could
 % look like this:
 %
 % sudo unzip /Users/kleinerm/Psychtoolbox/PsychHardware/PsychtoolboxKernelDriver64Bit.kext.zip
