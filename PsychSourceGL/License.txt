@@ -85,6 +85,17 @@
 % List of submodules with their associated licenses, as far as they deviate
 % from the MIT license printed above, and their main authors:
 %
+% Psychtoolbox/PsychSound: portaudio_x86.dll
+%
+% The PsychPortAudio driver on Microsoft Windows dynamically loads
+% a DLL, the "portaudio_x86.dll" from the Psychtoolbox/PsychSound/ subfolder.
+% The DLL is compiled from a modified version of the free/open-source PortAudio library.
+% The source code of this MIT licensed library and of all modifications we made
+% can be found in a Psychtoolbox C-Sourcecode download in the subfolder
+% PsychSourceGL/Cohorts/PortAudio/. Building from this source code will yield
+% portaudio_x86.dll which is fully MIT licensed.
+%
+%
 % Psychtoolbox/PsychContributed: See individual licenses and output of
 %                                "help PsychContributed" in that folder.
 %
@@ -118,6 +129,11 @@
 % GLSL shaders for the OpenGL GLSL.m demo from the "Orange book" are
 % Copyright (C) 2002-2006  3Dlabs Inc. Ltd., licensed under a BSD-3 style
 % license. See file: PsychDemos/OpenGL4MatlabDemos/GLSLDemoShaders/3Dlabs-License.txt
+%
+% GLSL shaders for Perlin noise: - MIT license, Copyright (C) 2011 Ashima Arts and
+%                                  Copyright (c) 2011 Stefan Gustavson.
+%                                  Files from https://github.com/ashima/webgl-noise
+%                                  With minimal modifications for PTB by Mario Kleiner.
 %
 % All other OpenGL GLSL shaders - MIT license : Mario Kleiner.
 %
