@@ -12,65 +12,17 @@ function InitializePsychSound(reallyneedlowlatency)
 % the lowest possible latency and highest timing precision after this
 % initialization.
 %
-% On Microsoft Windows, things are more complicated and painful as always:
+% On Microsoft Windows you won't get any low-latency or high timing precision
+% sound with any Psychtoolbox version before version 3.0.15, so upgrading to
+% version 3.0.15 is required if you care about precision.
 %
-% By default PsychPortAudio on Windows will use the "portaudio_x86.dll"
-% low-level sound driver included in the Psychtoolbox/PsychSound/
-% subfolder. This driver supports the Windows MME (MultiMediaExtensions)
-% and DirectSound sound systems. Apart from being buggy on some systems,
-% these sound systems only have a mildly accurate timing and a fairly high
-% inherent latency, typically over 30 milliseconds. On 150$ class sound
-% hardware we were able to achieve a trial-to-trial sound onset variability
-% with a standard deviation of about 1 millisecond, which is still good
-% enough for many purposes.
-%
-% If you need really low latency or high precision sound on Windows, ASIO is
-% what you want to use: Some (usually more expensive > 150$) professional class
-% sound cards ship with ASIO enabled sound drivers.
-%
-% Disclaimer: "ASIO is a trademark and software of Steinberg Media
-% Technologies GmbH."
-%
-% By default, our driver does not support ASIO, as ASIO is a proprietary technology
-% that requires special licensing. If you need ASIO support, you must download a
-% separate portaudio DLL plugin with builtin ASIO support. Check the Psychtoolbox
-% website for instructions on where to find such a plugin, how to install it, and
-% what license requirements you have to obey to use it.
-%
-% The Windows MME (MultiMediaExtensions) sound system has typical latencies
-% and inaccuracies in excess of 500 msecs, and the slightly better
-% DirectSound sound system still has a typical latency of over 30
-% milliseconds. Both systems are known to be buggy and unreliable wrt.
-% timing on many systems.
-%
-% The ASIO sound system provided by professional class sound cards usually
-% has excellent timing precision and latencies below 15 msecs, often as low
-% as 5 msecs for pro hardware. If you need really low latency or high
-% precision sound on Windows, ASIO is what you must use: Some (usually more
-% expensive) professional class sound cards ship with ASIO enabled sound
-% drivers, or at least there's such a driver available from the support
-% area of the website of your sound card vendor.
-%
-% For cards without native ASIO drivers, there's the free ASIO4ALL driver,
-% downloadable from http://asio4all.com, which may or may not work well on
-% your specific sound card - The driver emulates the ASIO interface on top
-% of the WDM-KS (Windows Driver Model Kernel Streaming) API from Microsoft,
-% so the quality depends on the underlying WDM driver. If you manage to get
-% such an ASIO enabled sound driver working on your sound hardware, and
-% your ASIO enabled driver and sound card are of sufficiently high quality,
-% you can enjoy latencies as low as 5 msecs and a sound onset accuracy with
-% a standard deviation from the mean of less than 0.1 milliseconds on
-% MS-Windows - We measured around 20 microseconds on some setups, e.g., the
-% M-Audio Delta 1010-LT soundcard under Windows-XP SP2.
-%
-% Using OS/X or Linux will usually get you comparably good or better
-% results with standard sound hardware.
+% PsychPortAudio on Windows supports two different Windows sound systems,
+% MME and DirectSound. The Windows MME (MultiMediaExtensions) sound system has
+% typical latencies and inaccuracies in excess of 500 msecs. DirectSound also
+% typically has latencies in the > 40 msecs range and inaccurate timing.
 
 % History:
 % 6/6/2007    Written (MK).
-% 10/20/2011  Update: We always use ASIO enabled plugin on Windows by
-%             default, as the PTB V3.0.9 MIT style license allows bundling
-%             of an ASIO enabled proprietary dll with Psychtoolbox. (MK)
 
 if nargin < 1
     reallyneedlowlatency = [];
@@ -82,16 +34,14 @@ end
 
 % The usual tricks for MS-Windows:
 if IsWin
-    % Special ASIO enabled low-latency driver installed?
+    % Override driver installed?
     if exist([PsychtoolboxRoot 'portaudio_x86.dll']) >= 2 %#ok<EXIST>
-        % Yes! Use it:
+        % Yes! Use override driver:
         fprintf('Detected optional PortAudio override driver plugin in Psychtoolbox root folder. Will use that.\n');
         driverloadpath = PsychtoolboxRoot;
-        asio = 1;
     else
-        % No - We use our standard driver without ASIO:
+        % No - We use our standard driver:
         driverloadpath = [PsychtoolboxRoot 'PsychSound'];
-        asio = 0;
     end
 
     % Standard path trick: Change working directory to driver load path,
@@ -100,33 +50,10 @@ if IsWin
     try
         olddir = pwd;
         cd(driverloadpath);
-        % We force loading+linking+init of the driver and at the same time
-        % query for ASIO support: API-Id 3 means to only query ASIO
-        % devices.
-        d = PsychPortAudio('GetDevices', 3);
+        % We force loading+linking+init of the driver:
+        d = PsychPortAudio('GetDevices');
         cd(olddir);
-
-        if asio
-            fprintf('\nWill use ASIO enhanced Portaudio driver DLL.\n');
-
-            % Comply with the license...
-            fprintf('\n\nDisclaimer: "ASIO is a trademark and software of Steinberg Media Technologies GmbH."\n');
-
-            % Found ASIO device?
-            if ~isempty(d)
-                % And some more commercials as required by the license...
-                fprintf('Using "ASIO Interface Technology by Steinberg Media Technologies GmbH"\n\n');
-                fprintf('Found at least one ASIO enabled soundcard in your system. Good, will use that in low-latency mode!\n');
-            else
-                % ASIO PsychPortAudio driver, but no ASIO device in system!
-                fprintf('PTB-Warning: Although using the ASIO enabled Psychtoolbox sound driver,\n');
-                fprintf('PTB-Warning: could not find any ASIO capable soundcard in your system.\n');
-                fprintf('PTB-Warning: If you think you should have an ASIO card, please check your\n');
-                fprintf('PTB-Warning: system for properly installed and configured drivers and retry.\n');
-                fprintf('PTB-Warning: Read "help InitializePsychSound" for more info about ASIO et al.\n');
-            end
-        end
-    catch
+    catch %#ok<*CTCH>
         cd(olddir);
         error('Failed to load PsychPortAudio driver for unknown reason! Dependency problem?!?');
     end

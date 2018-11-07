@@ -22,12 +22,8 @@ function BasicSoundOutputDemo(repetitions, wavfilename)
 % extra demos and tests for low-latency and high precision timing output will
 % follow soon. If you need low-latency, make sure to read "help
 % InitializePsychSound" carefully or contact the forum.
-% Our preliminary testing for low-latency mode showed that sub-millisecond
-% accurate sound onset and << 10 msecs latency are possible on OS/X and on
-% some specially configured M$-Windows setups.
-%
-% Disclaimer: "ASIO is a trademark and software of Steinberg Media
-% Technologies GmbH."
+% Testing for low-latency mode showed that sub-millisecond accurate sound
+% onset and < 10 msecs latency are possible on Linux and OSX.
 %
 % Optional arguments:
 %
