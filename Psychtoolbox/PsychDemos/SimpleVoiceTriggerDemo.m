@@ -9,11 +9,7 @@ function SimpleVoiceTriggerDemo(triggerlevel)
 %
 % The script relies on well working sound cards and drivers. It should
 % "just work" on most MacOS/X and Linux systems with standard hardware, but
-% it will need special ASIO capable sound hardware on MS-Windows for
-% accurate timing! See "help InitializePsychSound" for details.
-%
-% Disclaimer: "ASIO is a trademark and software of Steinberg Media
-% Technologies GmbH."
+% not at all on MS-Windows. See "help InitializePsychSound" for details.
 %
 % In any case you *must* verify correct timing of your sound hardware with
 % some external measurement equipment, e.g., in conjunction with the
