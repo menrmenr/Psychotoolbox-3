@@ -57,14 +57,7 @@
 % you need to start Matlab with the -nojvm command line switch, ie. matlab.exe -nojvm.
 % See also: https://github.com/Psychtoolbox-3/Psychtoolbox-3/wiki/FAQ#how-to-resolve-gstreamer-problems
 %
-%
-% Download and install the latest 64-Bit ("x86_64") GStreamer runtimes from:
-%
-% <http://gstreamer.freedesktop.org/download/>
-%
-% You should check for and install the latest runtime packages available for your
-% system for best reliability and performance. However, as a convenience, at time
-% of this writing (October 2018) the required downloads would be:
+% Use the following GStreamer packages for Windows and Apple OSX:
 %
 % For MS-Windows: 64-Bit Intel runtime v1.14.4 for use with 64-Bit Matlab/Octave.
 %
